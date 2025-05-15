@@ -1,0 +1,44 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "mlops"
+version = "0.0.1"
+description = "A short description of the project."
+authors = [
+  { name = "OmarGaballah" },
+]
+
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    
+]
+dependencies = [
+    "dotenv>=0.9.9",
+    "globals>=0.3.36",
+    "loguru>=0.7.3",
+    "numpy>=2.2.5",
+    "pandas>=2.2.3",
+    "pip",
+    "python-dotenv",
+    "ruff",
+    "scikit-learn>=1.6.1",
+    "tqdm>=4.67.1",
+]
+requires-python = "~=3.12.0"
+
+
+[tool.ruff]
+line-length = 99
+src = ["mlops"]
+include = ["pyproject.toml", "mlops/**/*.py"]
+
+[tool.ruff.lint]
+extend-select = ["I"]  # Add import sorting
+
+[tool.ruff.lint.isort]
+known-first-party = ["mlops"]
+force-sort-within-sections = true
+
