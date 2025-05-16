@@ -4,9 +4,9 @@ import pickle
 import numpy as np
 import pandas as pd
 
-from core import logger,PROCESSED_DATA_DIR
-from dataset.data_loader import Dataset
+from dataset.data_laoder import Dataset
 from dataset.process_data import Preprocessor
+from core import logger
 
 
 class Saver:
@@ -16,8 +16,8 @@ class Saver:
         y: np.ndarray,
         target_col: str,
         processor: Preprocessor,
-        filename: str = "train_processed.csv",
-        dir: str = PROCESSED_DATA_DIR,
+        filename: str,
+        dir: str,
     ):
         """
         Save the processed data to a CSV file.
@@ -37,7 +37,7 @@ class Saver:
         """
         if os.path.exists(dir) is False:
             os.makedirs(dir)
-        filepath = dir / filename
+        filepath = os.path.join(dir, filename)
         dataset.get().to_csv(filepath, sep=",")
         logger.success(f"Dataset saved to {filepath}.")
 
@@ -48,7 +48,7 @@ class Saver:
         """
         if os.path.exists(dir) is False:
             os.makedirs(dir)
-        filepath = dir / f"{model_name}.pkl"
+        filepath = os.path.join(dir, f"{model_name}.pkl")
         with open(filepath, "wb") as f:
             pickle.dump(model, f)
 

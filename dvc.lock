@@ -1,0 +1,296 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: uv run src/preprocessing.py
+    deps:
+    - path: data/raw/train.csv
+      hash: md5
+      md5: 2309cc5f04782ed9bb6016d9f4e381cf
+      size: 61194
+    - path: src/preprocessing.py
+      hash: md5
+      md5: b817df2f9edb30e0784f02ba64c7ac15
+      size: 2866
+    params:
+      params.yaml:
+        dataset:
+          target_col: Survived
+          id_col: PassengerId
+          test_size: 0.2
+        hyperparameters:
+          random_forest:
+            n_estimators: 100
+            max_depth: 10
+            min_samples_split: 2
+            min_samples_leaf: 1
+            random_state: 42
+        names:
+          train_data: train.csv
+          test_data: test.csv
+          val_data: val.csv
+          model_name: random_forest
+          submission_name: submission.csv
+          columns_transformer: columns_transformer
+        paths:
+          data_parent_dir: data
+          models_parent_dir: models
+          reports_parent_dir: reports
+          figures_parent_dir: figures
+          data:
+            raw_data: data/raw
+            interim_data: data/interim
+            processed_data: data/processed
+            external_data: data/external
+        pipeline_config:
+          drop:
+          - PassengerId
+          - Name
+          - Ticket
+          - Cabin
+          imputation:
+            mean:
+            - Age
+          scaling:
+            standard:
+            - Age
+            - Fare
+            minmax:
+            - FamilySize
+            - TicketGroupSize
+          encoding:
+            onehot:
+            - Sex
+            ordinal:
+            - Embarked
+            - Deck
+            - Title
+        tuning:
+          n_iter: 10
+          cv: 5
+          random_forest:
+            n_estimators:
+            - 50
+            - 100
+            - 200
+            max_depth:
+            - 5
+            - 10
+            - 15
+            min_samples_split:
+            - 2
+            - 5
+            min_samples_leaf:
+            - 1
+            - 2
+            max_features:
+            - sqrt
+            - log2
+    outs:
+    - path: data/interim/train.csv
+      hash: md5
+      md5: 7a6ba5e1f738bd96208206c22c792a0a
+      size: 80705
+    - path: data/interim/val.csv
+      hash: md5
+      md5: 30cbdeba2b8ef6cecef2ce82e847bbec
+      size: 20202
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 11710e9ba19448f6f209e0261db47077
+      size: 62386
+    - path: data/processed/val.csv
+      hash: md5
+      md5: c89b53ce421cf3b47e8d3f1015f695d2
+      size: 15557
+    - path: models/random_forest/columns_transformer.pkl
+      hash: md5
+      md5: 716c7331b2a26f18901f584c816f91f8
+      size: 3773
+  train:
+    cmd: uv run src/training.py
+    deps:
+    - path: data/processed/train.csv
+      hash: md5
+      md5: 11710e9ba19448f6f209e0261db47077
+      size: 62386
+    - path: models/random_forest/columns_transformer.pkl
+      hash: md5
+      md5: 716c7331b2a26f18901f584c816f91f8
+      size: 3773
+    - path: src/training.py
+      hash: md5
+      md5: 0328ea737fbda8b5cc00e4771632d573
+      size: 2472
+    params:
+      params.yaml:
+        dataset:
+          target_col: Survived
+          id_col: PassengerId
+          test_size: 0.2
+        hyperparameters:
+          random_forest:
+            n_estimators: 100
+            max_depth: 10
+            min_samples_split: 2
+            min_samples_leaf: 1
+            random_state: 42
+        names:
+          train_data: train.csv
+          test_data: test.csv
+          val_data: val.csv
+          model_name: random_forest
+          submission_name: submission.csv
+          columns_transformer: columns_transformer
+        paths:
+          data_parent_dir: data
+          models_parent_dir: models
+          reports_parent_dir: reports
+          figures_parent_dir: figures
+          data:
+            raw_data: data/raw
+            interim_data: data/interim
+            processed_data: data/processed
+            external_data: data/external
+        pipeline_config:
+          drop:
+          - PassengerId
+          - Name
+          - Ticket
+          - Cabin
+          imputation:
+            mean:
+            - Age
+          scaling:
+            standard:
+            - Age
+            - Fare
+            minmax:
+            - FamilySize
+            - TicketGroupSize
+          encoding:
+            onehot:
+            - Sex
+            ordinal:
+            - Embarked
+            - Deck
+            - Title
+        tuning:
+          n_iter: 10
+          cv: 5
+          random_forest:
+            n_estimators:
+            - 50
+            - 100
+            - 200
+            max_depth:
+            - 5
+            - 10
+            - 15
+            min_samples_split:
+            - 2
+            - 5
+            min_samples_leaf:
+            - 1
+            - 2
+            max_features:
+            - sqrt
+            - log2
+    outs:
+    - path: models/random_forest/random_forest.pkl
+      hash: md5
+      md5: 04c1581bab0a07c36f8892a32b9ef8d6
+      size: 2209658
+  evaluate:
+    cmd: uv run src/evaluate.py
+    deps:
+    - path: data/processed/val.csv
+      hash: md5
+      md5: c89b53ce421cf3b47e8d3f1015f695d2
+      size: 15557
+    - path: models/random_forest/random_forest.pkl
+      hash: md5
+      md5: 04c1581bab0a07c36f8892a32b9ef8d6
+      size: 2209658
+    - path: src/evaluate.py
+      hash: md5
+      md5: 32724ff729e961f0ee1e097d2f0ae81e
+      size: 2998
+    params:
+      params.yaml:
+        dataset:
+          target_col: Survived
+          id_col: PassengerId
+          test_size: 0.2
+        hyperparameters:
+          random_forest:
+            n_estimators: 100
+            max_depth: 10
+            min_samples_split: 2
+            min_samples_leaf: 1
+            random_state: 42
+        names:
+          train_data: train.csv
+          test_data: test.csv
+          val_data: val.csv
+          model_name: random_forest
+          submission_name: submission.csv
+          columns_transformer: columns_transformer
+        paths:
+          data_parent_dir: data
+          models_parent_dir: models
+          reports_parent_dir: reports
+          figures_parent_dir: figures
+          data:
+            raw_data: data/raw
+            interim_data: data/interim
+            processed_data: data/processed
+            external_data: data/external
+        pipeline_config:
+          drop:
+          - PassengerId
+          - Name
+          - Ticket
+          - Cabin
+          imputation:
+            mean:
+            - Age
+          scaling:
+            standard:
+            - Age
+            - Fare
+            minmax:
+            - FamilySize
+            - TicketGroupSize
+          encoding:
+            onehot:
+            - Sex
+            ordinal:
+            - Embarked
+            - Deck
+            - Title
+        tuning:
+          n_iter: 10
+          cv: 5
+          random_forest:
+            n_estimators:
+            - 50
+            - 100
+            - 200
+            max_depth:
+            - 5
+            - 10
+            - 15
+            min_samples_split:
+            - 2
+            - 5
+            min_samples_leaf:
+            - 1
+            - 2
+            max_features:
+            - sqrt
+            - log2
+    outs:
+    - path: reports/random_forest/evaluation_report.json
+      hash: md5
+      md5: 6052ba8a573118be9286f45336d24b9f
+      size: 423

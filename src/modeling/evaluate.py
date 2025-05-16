@@ -1,8 +1,9 @@
 import json
 import os
 import pickle
+from typing import Dict
 
-from omegaconf import DictConfig
+import dvc.api
 import pandas as pd
 from skore import EstimatorReport
 
@@ -10,7 +11,7 @@ from dataset.data_loader import Dataset
 from core import logger
 
 
-def evaluate(cfg: DictConfig) -> None:
+def evaluate(cfg: Dict) -> None:
     logger.info("loading model")
     with open(
         os.path.join(
@@ -56,7 +57,7 @@ def evaluate(cfg: DictConfig) -> None:
         json.dump(evaluation_report, js, indent=4)
 
 
-def generate_submission_file(cfg: DictConfig) -> None:
+def generate_submission_file(cfg: Dict) -> None:
     logger.info("loading model")
     with open(
         os.path.join(
@@ -87,3 +88,7 @@ def generate_submission_file(cfg: DictConfig) -> None:
         ),
         index=False,
     )
+
+
+if __name__ == "__main__":
+    evaluate(cfg=dvc.api.params_show())

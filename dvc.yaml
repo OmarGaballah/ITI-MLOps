@@ -1,0 +1,49 @@
+stages:
+  preprocess:
+    cmd: uv run src/preprocessing.py
+    deps:
+    - data/raw/train.csv
+    - src/preprocessing.py
+    outs:
+    - data/interim/train.csv
+    - data/interim/val.csv
+    - data/processed/train.csv
+    - data/processed/val.csv
+    - models/random_forest/columns_transformer.pkl
+    params:
+    - dataset
+    - hyperparameters
+    - names
+    - paths
+    - pipeline_config
+    - tuning
+  train:
+    cmd: uv run src/training.py
+    deps:
+    - data/processed/train.csv
+    - models/random_forest/columns_transformer.pkl
+    - src/training.py
+    params:
+    - dataset
+    - hyperparameters
+    - names
+    - paths
+    - pipeline_config
+    - tuning
+    outs:
+    - models/random_forest/random_forest.pkl
+  evaluate:
+    cmd: uv run src/evaluate.py
+    deps:
+    - data/processed/val.csv
+    - models/random_forest/random_forest.pkl
+    - src/evaluate.py
+    params:
+    - dataset
+    - hyperparameters
+    - names
+    - paths
+    - pipeline_config
+    - tuning
+    outs:
+    - reports/random_forest/evaluation_report.json

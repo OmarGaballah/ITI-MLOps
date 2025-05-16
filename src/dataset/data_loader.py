@@ -2,8 +2,6 @@ import os
 
 import pandas as pd
 
-import numpy as np
-
 from core import logger
 
 
@@ -56,64 +54,14 @@ class Dataset:
         return Dataset(X_train), Dataset(y_train), Dataset(X_test), Dataset(y_test)
 
     def engineer_features(self) -> "Dataset":
+        from dataset.features import extract_features
 
         """
         Perform feature engineering on the dataset.
         """
-
-        self.df["Title"] = self.df["Name"].str.extract(" ([A-Za-z]+)\.", expand=False)
-        self.df["Title"] = self.df["Title"].replace(
-            [
-                "Lady",
-                "Countess",
-                "Capt",
-                "Col",
-                "Don",
-                "Dr",
-                "Major",
-                "Rev",
-                "Sir",
-                "Jonkheer",
-                "Dona",
-            ],
-            "Rare",
-        )
-        self.df["Title"] = self.df["Title"].replace({"Mlle": "Miss", "Ms": "Miss", "Mme": "Mrs"})
-
-        # 2. Family Size
-        self.df["FamilySize"] = self.df["SibSp"] + self.df["Parch"] + 1
-        self.df["IsAlone"] = (self.df["FamilySize"] == 1).astype(int)
-
-        # 3. Deck from Cabin
-        self.df["Deck"] = self.df["Cabin"].astype(str).str[0]
-        self.df["Deck"] = self.df["Deck"].fillna("U")
-
-        # 4. Ticket Group Size
-        ticket_counts = self.df["Ticket"].value_counts()
-        self.df["TicketGroupSize"] = self.df["Ticket"].map(ticket_counts)
-
-        # 5. Fare per Person
-        self.df["FarePerPerson"] = self.df["Fare"] / self.df["FamilySize"]
-        self.df["FarePerPerson"].replace([np.inf, -np.inf], np.nan, inplace=True)
-
-        # 6. Binning Age and Fare
-        self.df["AgeBin"] = pd.cut(
-            self.df["Age"], bins=[0, 12, 20, 40, 60, 80], labels=False, include_lowest=True
-        )
-        self.df["FareBin"] = pd.qcut(self.df["Fare"], 4, labels=False)
-
-        # 7. Interaction Features
-        self.df["Pclass*AgeBin"] = self.df["Pclass"] * self.df["AgeBin"].fillna(0).astype(int)
-        self.df["Sex_Pclass"] = self.df["Sex"].astype(str) + "_" + self.df["Pclass"].astype(str)
-
-        # 8. Missing Value Indicators
-        self.df["CabinMissing"] = self.df["Cabin"].isnull().astype(int)
-        self.df["AgeMissing"] = self.df["Age"].isnull().astype(int)
-        
+        df_features = extract_features(self.df)
         logger.success("Feature engineering completed.")
-
-
-        return Dataset(self.df, target_col="Survived")
+        return df_features
 
     def get(self) -> pd.DataFrame:
         """
