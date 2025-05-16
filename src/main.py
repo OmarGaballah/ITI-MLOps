@@ -4,9 +4,8 @@ import os
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 
-from config import INTERIM_DATA_DIR, MODELS_DIR, PIPELINE_CONFIG, RAW_DATA_DIR
+from core import logger,INTERIM_DATA_DIR, MODELS_DIR, PIPELINE_CONFIG, RAW_DATA_DIR
 from dataset.data_loader import Dataset
-from globals import logger
 from modeling.evaluate import evaluate, generate_submission_file
 from modeling.train import train
 from preprocessing import preprocess_train

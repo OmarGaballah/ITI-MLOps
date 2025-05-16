@@ -1,10 +1,9 @@
 
 import numpy as np
 
-from config import INTERIM_DATA_DIR, PIPELINE_CONFIG
+from core import logger,INTERIM_DATA_DIR, PIPELINE_CONFIG
 from dataset.data_loader import Dataset
 from dataset.process_data import Preprocessor
-from globals import logger
 from saver import Saver
 
 

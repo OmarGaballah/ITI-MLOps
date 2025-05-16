@@ -1,12 +1,14 @@
-
 from datetime import datetime
 from pathlib import Path
 import sys
 from typing import Optional
 
-from loguru import logger
+from dotenv import load_dotenv
+from loguru import logger as loguru_logger
 
-
+# ---------------------------
+# ExecutorLogger Class
+# ---------------------------
 class ExecutorLogger:
     """
     A logger class that utilizes the Loguru library to provide a flexible and
@@ -28,7 +30,7 @@ class ExecutorLogger:
             level (str): The logging level (e.g., "DEBUG", "INFO", "WARNING",
                           "ERROR", "CRITICAL"). Default is "INFO".
         """
-        self.logger = logger
+        self.logger = loguru_logger
         self.logger.remove()  # Remove the default logger
         self.logger.add(sys.stdout, level=level, format=self._get_console_format())
 
@@ -61,67 +63,67 @@ class ExecutorLogger:
         return "{time:YYYY-MM-DD HH:mm:ss} | {level: <8} | {name}:{line} - {message}"
 
     def debug(self, message: str, *args, **kwargs):
-        """
-        Logs a message with level DEBUG.
-
-        Args:
-            message (str): The message to log.
-            *args: Additional positional arguments to format the message.
-            **kwargs: Additional keyword arguments for logging.
-        """
         self.logger.debug(message, *args, **kwargs)
 
     def info(self, message: str, *args, **kwargs):
-        """
-        Logs a message with level INFO.
-
-        Args:
-            message (str): The message to log.
-            *args: Additional positional arguments to format the message.
-            **kwargs: Additional keyword arguments for logging.
-        """
         self.logger.info(message, *args, **kwargs)
 
     def warning(self, message: str, *args, **kwargs):
-        """
-        Logs a message with level WARNING.
-
-        Args:
-            message (str): The message to log.
-            *args: Additional positional arguments to format the message.
-            **kwargs: Additional keyword arguments for logging.
-        """
         self.logger.warning(message, *args, **kwargs)
 
     def error(self, message: str, *args, **kwargs):
-        """
-        Logs a message with level ERROR.
-
-        Args:
-            message (str): The message to log.
-            *args: Additional positional arguments to format the message.
-            **kwargs: Additional keyword arguments for logging.
-        """
         self.logger.error(message, *args, **kwargs)
 
     def critical(self, message: str, *args, **kwargs):
-        """
-        Logs a message with level CRITICAL.
-
-        Args:
-            message (str): The message to log.
-            *args: Additional positional arguments to format the message.
-            **kwargs: Additional keyword arguments for logging.
-        """
         self.logger.critical(message, *args, **kwargs)
 
     def success(self, message: str, *args, **kwargs):
-        """
-        Logs a message with level SUCCESS.
-
-        Args:
-            message (str): The message to log.
-            *args: Additional positional arguments to format the message.
-            **kwargs: Additional keyword arguments for logging.
-        """
         self.logger.success(message, *args, **kwargs)
+
+
+# ---------------------------
+# Create logger instance globally
+# ---------------------------
+logger = ExecutorLogger("globals")
+
+# ---------------------------
+# Load environment variables
+# ---------------------------
+load_dotenv()
+
+# ---------------------------
+# Config and paths
+# ---------------------------
+PROJ_ROOT = Path(__file__).resolve().parents[1]
+logger.info(f"PROJ_ROOT path is: {PROJ_ROOT}")
+
+DATA_DIR = PROJ_ROOT / "data"
+RAW_DATA_DIR = DATA_DIR / "raw"
+INTERIM_DATA_DIR = DATA_DIR / "interim"
+PROCESSED_DATA_DIR = DATA_DIR / "processed"
+EXTERNAL_DATA_DIR = DATA_DIR / "external"
+
+MODELS_DIR = PROJ_ROOT / "models"
+
+REPORTS_DIR = PROJ_ROOT / "reports"
+FIGURES_DIR = REPORTS_DIR / "figures"
+
+PIPELINE_CONFIG = {
+    "drop": ["PassengerId", "Name", "Ticket", "Cabin"],
+    "imputation": {
+        "mean": ["Age"],
+    },
+    "scaling": {"standard": ["Age", "Fare"], "minmax": ["FamilySize", "TicketGroupSize"]},
+    "encoding": {"onehot": ["Sex"], "ordinal": ["Embarked", "Deck", "Title"]},
+}
+
+# ---------------------------
+# tqdm integration for logging (optional)
+# ---------------------------
+try:
+    from tqdm import tqdm
+
+    logger.logger.remove(0)  # remove default handler from loguru logger inside ExecutorLogger instance
+    logger.logger.add(lambda msg: tqdm.write(msg, end=""), colorize=True)
+except ValueError:
+    pass

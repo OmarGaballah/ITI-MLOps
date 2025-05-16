@@ -6,9 +6,9 @@ import pickle
 import pandas as pd
 from skore import EstimatorReport
 
-from config import INTERIM_DATA_DIR, MODELS_DIR, RAW_DATA_DIR, REPORTS_DIR
 from dataset.data_loader import Dataset
-from globals import logger
+from core import logger, INTERIM_DATA_DIR, PROCESSED_DATA_DIR, PIPELINE_CONFIG,MODELS_DIR,REPORTS_DIR,RAW_DATA_DIR
+
 
 
 def evaluate(model_name: str) -> None:

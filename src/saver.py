@@ -4,10 +4,9 @@ import pickle
 import numpy as np
 import pandas as pd
 
-from config import PROCESSED_DATA_DIR
+from core import logger,PROCESSED_DATA_DIR
 from dataset.data_loader import Dataset
 from dataset.process_data import Preprocessor
-from globals import logger
 
 
 class Saver:

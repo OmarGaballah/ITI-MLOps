@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from globals import logger
+from core import logger
 
 import numpy as np
 

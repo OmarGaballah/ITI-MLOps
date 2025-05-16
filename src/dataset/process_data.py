@@ -14,7 +14,7 @@ from sklearn.preprocessing import (
     TargetEncoder,
 )
 
-from globals import logger
+from core import logger
 
 
 class Preprocessor:
