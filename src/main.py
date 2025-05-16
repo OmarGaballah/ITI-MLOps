@@ -1,38 +1,55 @@
 
 import os
 
+import hydra
+from omegaconf import DictConfig, OmegaConf
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 
-from core import logger,INTERIM_DATA_DIR, MODELS_DIR, PIPELINE_CONFIG, RAW_DATA_DIR
 from dataset.data_loader import Dataset
+from core import logger
 from modeling.evaluate import evaluate, generate_submission_file
-from modeling.train import train
+from modeling.train import train_RandomizedSearchCV
 from preprocessing import preprocess_train
 from saver import Saver
 
 
-def main() -> None:
+@hydra.main(config_path="../conf", config_name="config", version_base=None)
+def main(cfg: DictConfig) -> None:
+    logger.info(f"Pipeline Parameters: \n{OmegaConf.to_yaml(cfg)}")
     logger.info("Training started")
-    train_ds = Dataset(data=os.path.join(RAW_DATA_DIR, "train.csv"), target_col="Survived")
+    cfg = cfg["pipeline"]
+    train_ds = Dataset(
+        data=os.path.join(cfg["paths"]["data"]["raw_data"], cfg["names"]["train_data"]),
+        target_col=cfg["dataset"]["target_col"],
+    )
     train_ds = train_ds.engineer_features()
-
-    Saver.save_dataset(train_ds, filename="train.csv", dir=INTERIM_DATA_DIR)
 
     X_train, y_train, X_val, y_val, preprocessor = preprocess_train(
         train_ds,
-        pipeline_config=PIPELINE_CONFIG,
+        cfg=cfg,
+    )
+    model = RandomForestClassifier(
+        **OmegaConf.to_container(cfg["hyperparameters"]["random_forest"], resolve=True),
     )
 
-    model = RandomForestClassifier(n_estimators=100, max_depth=5, random_state=1)
-
-    train(model, X_train, y_train)
+    model = train_RandomizedSearchCV(model, cfg, X_train, y_train)
 
     Saver.save_processed_data(
-        X_train, y_train, target_col="Survived", processor=preprocessor, filename="train.csv"
+        X_train,
+        y_train,
+        target_col=cfg["dataset"]["target_col"],
+        processor=preprocessor,
+        filename=cfg["names"]["train_data"],
+        dir=cfg["paths"]["data"]["processed_data"],
     )
     Saver.save_processed_data(
-        X_val, y_val, target_col="Survived", processor=preprocessor, filename="val.csv"
+        X_val,
+        y_val,
+        target_col=cfg["dataset"]["target_col"],
+        processor=preprocessor,
+        filename=cfg["names"]["val_data"],
+        dir=cfg["paths"]["data"]["processed_data"],
     )
 
     full_pipeline = Pipeline(
@@ -44,14 +61,14 @@ def main() -> None:
 
     Saver.save_model(
         full_pipeline,
-        model_name="random_forest",
-        dir=MODELS_DIR / "random_forest",
+        model_name=cfg["names"]["model_name"],
+        dir=os.path.join(cfg["paths"]["models_parent_dir"], cfg["names"]["model_name"]),
     )
 
     logger.info("Training finished")
-    evaluate(model_name="random_forest")
+    evaluate(cfg=cfg)
 
-    generate_submission_file(model_name="random_forest")
+    generate_submission_file(cfg=cfg)
 
 
 if __name__ == "__main__":

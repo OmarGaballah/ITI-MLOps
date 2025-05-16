@@ -14,8 +14,6 @@ from sklearn.preprocessing import (
     TargetEncoder,
 )
 
-from core import logger
-
 
 class Preprocessor:
     def __init__(
@@ -27,7 +25,6 @@ class Preprocessor:
     def fit(self, X: pd.DataFrame) -> "Preprocessor":
         transformers = []
 
-        logger.info(f"Columns to drop: {self.pipeline_config.get('drop', [])}")
         transformers.append(("drop_columns", "drop", self.pipeline_config.get("drop", [])))
         transformers.extend(self.__create_encode_steps())
         transformers.extend(self.__create_scaling_steps())

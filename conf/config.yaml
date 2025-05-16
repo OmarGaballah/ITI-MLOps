@@ -1,0 +1,22 @@
+defaults:
+  - model: random_forest
+
+paths:
+  raw_data: data/raw
+  interim_data: data/interim
+  processed_data: data/processed
+  external_data: data/external
+  models: models
+  reports: reports
+  figures: reports/figures
+
+pipeline:
+  drop: ["PassengerId", "Name", "Ticket", "Cabin"]
+  imputation:
+    mean: ["Age"]
+  scaling:
+    standard: ["Age", "Fare"]
+    minmax: ["FamilySize", "TicketGroupSize"]
+  encoding:
+    onehot: ["Sex"]
+    ordinal: ["Embarked", "Deck", "Title"]

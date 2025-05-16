@@ -2,9 +2,10 @@ import os
 
 import pandas as pd
 
+import numpy as np
+
 from core import logger
 
-import numpy as np
 
 class Dataset:
     def __init__(
