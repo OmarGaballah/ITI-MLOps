@@ -3,42 +3,60 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "mlops"
+name = "src"
 version = "0.0.1"
-description = "A short description of the project."
+description = "Complete MLOps Pipeline for ML Practationers"
 authors = [
-  { name = "OmarGaballah" },
+  { name = "Ezzaldin" },
 ]
-
+license = { file = "LICENSE" }
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
-    
+    "License :: OSI Approved :: MIT License"
 ]
 dependencies = [
-    "dotenv>=0.9.9",
-    "globals>=0.3.36",
-    "loguru>=0.7.3",
-    "numpy>=2.2.5",
-    "pandas>=2.2.3",
+    "dagshub~=0.3.30",
+    "dvc~=3.33.0",
+    "dvc-s3~=3.2.0",
+    "hydra-core~=1.1.0",
+    "hyperopt~=0.2.5",
+    "loguru~=0.7.2",
+    "numpy~=1.26.4",
+    "pandas~=2.0.1",
     "pip",
+    "pyarrow~=19.0.0",
     "python-dotenv",
     "ruff",
-    "scikit-learn>=1.6.1",
-    "tqdm>=4.67.1",
+    "scikit-learn~=1.6.0",
+    "skore~=0.8.2",
 ]
-requires-python = "~=3.12.0"
+requires-python = "~=3.11.0"
 
 
 [tool.ruff]
 line-length = 99
-src = ["mlops"]
-include = ["pyproject.toml", "mlops/**/*.py"]
+src = ["src"]
+include = ["pyproject.toml", "src/**/*.py"]
 
 [tool.ruff.lint]
 extend-select = ["I"]  # Add import sorting
 
 [tool.ruff.lint.isort]
-known-first-party = ["mlops"]
+known-first-party = ["src"]
 force-sort-within-sections = true
 
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29.5",
+    "ipywidgets>=8.1.6",
+    "kagglehub>=0.3.11",
+]
+linting = [
+    "black>=25.1.0",
+    "isort>=6.0.1",
+]
+optional = [
+    "hydra-colorlog>=1.2.0",
+    "wandb~=0.19.6",
+]
