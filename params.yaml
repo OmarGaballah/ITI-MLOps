@@ -1,3 +1,4 @@
+
 paths:
   data_parent_dir: data
   models_parent_dir: models
@@ -18,9 +19,15 @@ names:
   train_data: "train.csv"
   test_data: "test.csv"
   val_data: "val.csv"
-  model_name: "random_forest"
+  model_name: "random_forest1"
   submission_name: "submission.csv"
   columns_transformer: "columns_transformer"
+
+metrics:
+  accuracy: "accuracy"
+  precision: "precision"
+  recall: "recall"
+  roc_auc: "roc_auc"
 
 hyperparameters:
   random_forest:
@@ -31,8 +38,8 @@ hyperparameters:
     random_state: 42
 
 tuning:
-  n_iter: 10
-  cv: 5
+  n_iter: 1
+  cv: 2
   random_forest:
     n_estimators:
       - 50
@@ -75,3 +82,6 @@ pipeline_config:
       - Embarked
       - Deck
       - Title
+
+flags:
+  use_mlflow: true

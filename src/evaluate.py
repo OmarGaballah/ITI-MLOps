@@ -1,27 +1,26 @@
+
 import json
 import os
 import pickle
 from typing import Dict
 
 import dvc.api
+import mlflow
 import pandas as pd
 from skore import EstimatorReport
 
 from dataset.data_loader import Dataset
 from globals import logger
+from utils import get_mlflow_client, setup_dagshub
 
 
 def evaluate(cfg: Dict) -> None:
     logger.info("loading model")
-    with open(
-        os.path.join(
-            cfg["paths"]["models_parent_dir"],
-            cfg["names"]["model_name"],
-            f"{cfg['names']['model_name']}.pkl",
-        ),
-        "rb",
-    ) as pkl:
-        final_model = pickle.load(pkl)
+    client = get_mlflow_client()
+    logger.error(client.tracking_uri)
+    version = client.get_latest_versions(name=cfg['names']["model_name"])[0].version
+    logger.error(f"version: {version}")
+    final_model = mlflow.sklearn.load_model(model_uri=f"models:/{cfg['names']['model_name']}/{version}")
 
     data = Dataset(
         data=os.path.join(cfg["paths"]["data"]["interim_data"], cfg["names"]["val_data"]),
@@ -91,4 +90,6 @@ def generate_submission_file(cfg: Dict) -> None:
 
 
 if __name__ == "__main__":
-    evaluate(cfg=dvc.api.params_show())
+    cfg=dvc.api.params_show()
+    setup_dagshub(cfg=cfg)
+    evaluate(cfg=cfg)
