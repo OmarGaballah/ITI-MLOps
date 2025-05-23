@@ -4,8 +4,7 @@ import pandas as pd
 
 import numpy as np
 
-from core import logger
-
+from globals import logger
 
 class Dataset:
     def __init__(

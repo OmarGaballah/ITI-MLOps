@@ -1,4 +1,3 @@
-
 import os
 
 import hydra
@@ -7,7 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 
 from dataset.data_loader import Dataset
-from core import logger
+from globals import logger
 from modeling.evaluate import evaluate, generate_submission_file
 from modeling.train import train_RandomizedSearchCV
 from preprocessing import preprocess_train

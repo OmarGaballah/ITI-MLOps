@@ -1,4 +1,3 @@
-
 from typing import Dict
 
 import numpy as np
@@ -6,7 +5,7 @@ from omegaconf import DictConfig, OmegaConf
 
 from dataset.data_loader import Dataset
 from dataset.process_data import Preprocessor
-from core import logger
+from globals import logger
 from saver import Saver
 
 
