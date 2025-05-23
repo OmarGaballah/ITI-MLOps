@@ -1,13 +1,14 @@
+
 [build-system]
 requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "mlops"
+name = "src"
 version = "0.0.1"
-description = "A short description of the project."
+description = "Non configured pipeline"
 authors = [
-  { name = "OmarGaballah" },
+  { name = "Fady Adel" },
 ]
 
 readme = "README.md"
@@ -16,31 +17,31 @@ classifiers = [
     
 ]
 dependencies = [
-    "dotenv>=0.9.9",
-    "globals>=0.3.36",
+    "dvc>=3.59.2",
+    "dvc-s3>=3.2.0",
     "hydra-core>=1.3.2",
-    "loguru>=0.7.3",
-    "numpy>=2.2.5",
+    "loguru",
+    "mkdocs",
     "pandas>=2.2.3",
     "pip",
     "python-dotenv",
     "ruff",
     "scikit-learn>=1.6.1",
     "skore>=0.8.3",
-    "tqdm>=4.67.1",
+    "tqdm",
+    "typer",
 ]
-requires-python = "~=3.12.0"
+requires-python = "~=3.11.0"
 
 
 [tool.ruff]
 line-length = 99
-src = ["mlops"]
-include = ["pyproject.toml", "mlops/**/*.py"]
+src = ["src"]
+include = ["pyproject.toml", "src/**/*.py"]
 
 [tool.ruff.lint]
 extend-select = ["I"]  # Add import sorting
 
 [tool.ruff.lint.isort]
-known-first-party = ["mlops"]
+known-first-party = ["src"]
 force-sort-within-sections = true
-

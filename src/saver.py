@@ -1,12 +1,13 @@
+
 import os
 import pickle
 
 import numpy as np
 import pandas as pd
 
-from dataset.data_laoder import Dataset
+from dataset.data_loader import Dataset
 from dataset.process_data import Preprocessor
-from core import logger
+from globals import logger
 
 
 class Saver:

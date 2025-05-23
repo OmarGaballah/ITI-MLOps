@@ -1,3 +1,4 @@
+
 import os
 from typing import Dict
 
@@ -6,7 +7,7 @@ import numpy as np
 
 from dataset.data_loader import Dataset
 from dataset.process_data import Preprocessor
-from core import logger
+from globals import logger
 from saver import Saver
 
 
@@ -14,8 +15,7 @@ def preprocess_train(
     train_df: Dataset,
     cfg: Dict = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, Preprocessor]:
-    # ''' because OmegaConf must be converted to dict to avoid Transofmers erros in hydra but dvc.api doesn't use OmegaConf'''
-    # pipeline_config: Dict = OmegaConf.to_container(cfg["pipeline_config"], resolve=True)
+
     pipeline_config = cfg["pipeline_config"]
     preprocessor = Preprocessor(pipeline_config=pipeline_config)
 

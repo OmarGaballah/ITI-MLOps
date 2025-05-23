@@ -1,3 +1,4 @@
+
 from typing import Dict, List, Tuple
 
 import numpy as np
@@ -143,9 +144,11 @@ class Preprocessor:
         feature_names = []
         for name, transformer, columns in self.pipeline.transformers_:
             if transformer == "drop" or transformer is None:
-                continue  
+                continue  # Skip dropped columns
             elif hasattr(transformer, "get_feature_names_out"):
+                # For transformers like OneHotEncoder
                 feature_names.extend(transformer.get_feature_names_out(columns))
             else:
+                # For other transformers, use the column names directly
                 feature_names.extend(columns)
         return feature_names

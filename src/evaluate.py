@@ -8,7 +8,7 @@ import pandas as pd
 from skore import EstimatorReport
 
 from dataset.data_loader import Dataset
-from core import logger
+from globals import logger
 
 
 def evaluate(cfg: Dict) -> None:
